@@ -587,8 +587,8 @@
       let data = await send.json()
       console.log(data)
       console.log(data.sendData)
-      console.log(data.sendData.result)
-      if (data.sendData.result == 'passed') {
+      const sendData = data.sendData
+      if (sendData >= 16) {
         Swal.fire({
           icon: 'success',
           title: 'ผลการทดสอบ',
@@ -596,16 +596,13 @@
           confirmButtonText: 'OK',
         })
       }
-      else if (data.sendData.result == 'unpassed') {
+      else {
         Swal.fire({
           icon: 'error',
           title: 'ผลการทดสอบ',
           html: `ทำคะแนนได้ ${Score}/20 คะแนน<br/>(ทำคะแนนได้น้อยกว่า 16 คะแนน จึงถือว่า <b>"ไม่ผ่าน"</b>)</span>`,
           confirmButtonText: 'OK',
         })
-      }
-      else {
-        console.log('Error 500 Internal Server Error')
       }
     })
   </script>
