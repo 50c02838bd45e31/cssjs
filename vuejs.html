@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Foodhandler Post-test (Vue.js App)(replit)</title>
+  <title>Foodhandler Post-test (Vue.js App)</title>
   <link href="https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/vuejs.css" rel="stylesheet" type="text/css" />
   <link href="https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/favicon.png" rel="icon" type="image/x-icon" </head>
 
@@ -585,13 +585,14 @@
       const Score = document.getElementById("Score").value
       let send = await fetch(scriptURL, {method: 'POST', body: new FormData(saveDataForm)})
       let data = await send.json()
+      console.log(data)
       console.log(data.sendData)
       if (data.sendData == 'passed') {
         Swal.fire({
           icon: 'success',
           title: 'ผลการทดสอบ',
           html: `ทำคะแนนได้ ${Score}/20 คะแนน<br/>(ทำคะแนนได้มากกว่า 16 คะแนน จึงถือว่า <b>"ผ่าน"</b>)</span>`,
-          confirmButtonText: "OK",
+          confirmButtonText: 'OK',
         })
       }
       else if (data.sendData == 'unpassed') {
@@ -599,8 +600,14 @@
           icon: 'error',
           title: 'ผลการทดสอบ',
           html: `ทำคะแนนได้ ${Score}/20 คะแนน<br/>(ทำคะแนนได้น้อยกว่า 16 คะแนน จึงถือว่า <b>"ไม่ผ่าน"</b>)</span>`,
-          confirmButtonText: "OK",
+          confirmButtonText: 'OK',
         })
+      }
+      else if (data.sendData == undefined) {
+        console.log('Error 404 Not Found')
+      }
+      else {
+        console.log('Error 500 Internal Server Error')
       }
     })
   </script>
