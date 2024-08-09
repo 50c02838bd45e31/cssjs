@@ -588,7 +588,7 @@
       console.log(data)
       console.log(data.sendData)
       const sendData = data.sendData
-      if (sendData >= 16) {
+      if (sendData == 'pass') {
         Swal.fire({
           icon: 'success',
           title: 'ผลการทดสอบ',
@@ -596,7 +596,7 @@
           confirmButtonText: 'OK',
         })
       }
-      else {
+      else if (sendData == 'fail') {
         Swal.fire({
           icon: 'error',
           title: 'ผลการทดสอบ',
