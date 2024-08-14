@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Foodhandler Post-test (Vue.js App)</title>
+  <link href="https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/favicon.png" rel="icon" type="image/x-icon" </head>
+
+<body>
+  <main class="container">
+    <div id="app" v-cloak>
+      <template v-if="showWelcome">
+        <div class="welcome-page">
+          <center>
+            <br />
+            <img src="https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/logo.png"
+              style="width:200px; height:auto; padding-bottom: 10px; ">
+            <br />
+            <div class="form-group mb-2">
+              <label for="searchtext">
+                <h1>ระบบแบบทดสอบความรู้หลักสูตรการอบรมผู้สัมผัสอาหาร ตามกฏกระทรวงสุขลักษณะของสถานที่จำหน่ายอาหาร พ.ศ.
+                  ๒๕๖๑</h1>
+                <h3 style="color: red;">Copyright © 2019-present by Chatrawichai Chanprom | ลิขสิทธิ์และพัฒนาโดย
+                  นายชาติระวีไชย จันทร์พร้อม</h3>
+              </label>
+            </div>
+          </center>
+          <br />
+          <h5>กรุณาพิมพ์ หมายเลขโทรศัพท์ 10 หลัก/รหัสบัตรประจำตัวประชาชน 13 หลัก และ ชื่อสกุล ของท่านเพื่อเริ่มทำข้อสอบ:
+          </h5>
+          <input class="w3-mobile w3-center custom-form-control" type="text" v-model="ID"
+            placeholder="พิมพ์ หมายเลขโทรศัพท์ 10 หลัก/รหัสบัตรประจำตัวประชาชน 13 หลัก ที่นี้" id="ID" required>
+          <br>
+          <br>
+          <input class="w3-mobile w3-center custom-form-control" type="text" v-model="fn"
+            placeholder="พิมพ์ ชื่อ ที่นี้" id="fn" required>
+          <br>
+          <br>
+          <input class="w3-mobile w3-center custom-form-control" type="text" v-model="ln"
+            placeholder="พิมพ์ สกุล ที่นี้" id="ln" required>
+          <p class="w3-button w3-round w3-theme-d4 w3-margin-right w3-mobile" @click="startQuiz">เริ่มทำข้อสอบ</p>
+        </div>
+      </template>
+      <template v-else>
+        <header class="w3-card w3-theme">
+          <div class="w3-bar" v-show="!showSidebar">
+            <br>
+            <p class="w3-bar-item w3-mobile">
+              <b>
+                <center>{{title}}</center>
+              </b>
+            </p>
+          </div>
+          <div class="w3-bar" v-show="!showSidebar">
+            <p class="w3-bar-item w3-tag w3-round w3-theme-l5 w3-margin-left w3-margin-right w3-mobile">
+              <input class="w3-mobile w3-center" type="text"
+                style="border: none; background: transparent; outline: none; padding: 0px;" v-model="ID"
+                placeholder="พิมพ์ หมายเลขโทรศัพท์ 10 หลัก/รหัสบัตรประจำตัวประชาชน 13 หลัก ของท่านที่นี้" id="dataID"
+                size="70" value="" :disabled="start" required>
+            </p>
+            <p class="w3-bar-item w3-tag w3-round w3-theme-l5 w3-margin-left w3-margin-right w3-mobile">
+              <input class="w3-mobile w3-center" type="text"
+                style="border: none; background: transparent; outline: none; padding: 0px;" v-model="fn"
+                placeholder="พิมพ์ ชื่อ ของท่านที่นี้" id="dataFN" size="15" value="" :disabled="start" required>
+            </p>
+            <p class="w3-bar-item w3-tag w3-round w3-theme-l5 w3-margin-left w3-margin-right w3-mobile">
+              <input class="w3-mobile w3-center" type="text"
+                style="border: none; background: transparent; outline: none; padding: 0px;" v-model="ln"
+                placeholder="พิมพ์ สกุล ของท่านที่นี้" id="dataLN" size="18" value="" :disabled="start" required>
+            </p>
+            <p class="w3-bar-item w3-button w3-round w3-theme-d4 w3-margin-left w3-margin-right w3-mobile"
+              data-bs-toggle="modal" data-bs-target="#cert">
+              ดูใบวุฒิบัตรรับรอง
+            </p>
+            <template v-if="!start">
+              <p class="w3-bar-item w3-button w3-round w3-theme-d4 w3-margin-left w3-margin-right w3-mobile"
+                @click="startQuiz">
+                เริ่มทำข้อสอบ
+              </p>
+            </template>
+            <template v-else>
+              <p class="w3-bar-item w3-button w3-round w3-theme-d4 w3-margin-left w3-margin-right w3-mobile"
+                @click="endQuiz">
+                ส่งคำตอบ
+              </p>
+              <p class="w3-bar-item w3-tag w3-round w3-theme-l4 w3-margin-left w3-margin-right w3-mobile">
+                {{config.count}}
+                คำถาม
+              </p>
+              <p class="w3-bar-item w3-tag w3-round w3-theme-l4 w3-margin-left w3-margin-right w3-mobile">
+                {{timer}}
+              </p>
+            </template>
+          </div>
+        </header>
+      </template>
+      <main v-if="selectedQuestions">
+        <br><br><br><br><br><br>
+        <div class="w3-card w3-container w3-padding" v-for="(q, qIndex) in selectedQuestions" :key="q.id">
+          <div class="question-container">
+            <div class="question-text" style="padding-bottom: 20px;">
+              <label class="w3-block w3-mobile w3-container w3-padding w3-round"
+                :class="q.correct ? 'w3-theme-l3': 'w3-theme-l3'">
+                <span class="w3-tag w3-theme w3-round">{{qIndex + 1}}</span>
+                <b>{{q.title}}</b>
+                <span v-if="q.corrects.length > 1" class="w3-tag w3-round">M</span>
+              </label>
+              <br />
+              <template v-if="q.corrects.length > 1">
+                <template v-for="(option, i) in q.options">
+                  <label class="w3-block w3-mobile">
+                    <input class="w3-check" type="checkbox" v-model="q.selected" :name="q.id" :value="option"
+                      :disabled="q.disabled">
+                    {{option}}
+                  </label>
+                </template>
+              </template>
+              <template v-else>
+                <template v-for="(option, i) in q.options">
+                  <label class="w3-block w3-mobile">
+                    <input class="w3-radio" type="radio" v-model="q.selected" :name="q.id" :value="option"
+                      :disabled="q.disabled">
+                    {{option}}
+                  </label>
+                </template>
+                <br />
+              </template>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer v-if="selectedQuestions">
+        <div class="w3-container w3-theme">
+          <p class="w3-center w3-mobile">
+            <center>
+              Copyright © 2019-present by Chatrawichai Chanprom | ลิขสิทธิ์และพัฒนาโดย นายชาติระวีไชย จันทร์พร้อม
+            </center>
+          </p>
+        </div>
+      </footer>
+      <div class="message" v-if="message">
+        <div class="w3-card">
+          <div class="w3-padding" :class="message.type=='Error' ? 'w3-red': 'w3-theme'">
+            {{message.type}}
+          </div>
+          <div class="w3-padding">
+            <p class="w3-small">
+              {{message.message}}
+            </p>
+            <button class="w3-button w3-round" :class="message.type=='Error' ? 'w3-red': 'w3-theme'"
+              @click="closeMessageBox">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="message loading" v-if="submitting">
+      </div>
+    </div>
+    <section>
+      <button type="button" id="certModal" class="btn" data-bs-toggle="modal" data-bs-target="#cert" hidden></button>
+      <div class="modal fade" id="cert" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="certLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" id="close-certModal" class="btn-close" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <br>
+              <div class="row">
+                <div class="col ">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card text-center">
+                        <div class="card-header text-bg-success p-3">
+                          <i class="fa fa-database" aria-hidden="true"></i>
+                          &nbsp;&nbsp; คลังใบวุฒิบัตรรับรอง
+                        </div>
+                        <div class="card-body">
+                          <form id="search-form" class="form-inline">
+                            <div class="form-group mb-2">
+                              <label for="searchtext">
+                                กรุณาพิมพ์ หมายเลขโทรศัพท์ 10 หลัก /
+                                <br>
+                                รหัสบัตรประจำตัวประชาชน 13 หลัก
+                                <br>
+                                ที่ต้องการค้นหา
+                              </label>
+                            </div>
+                            <div class="form-group mx-sm-3 mb-2">
+                              <input type="text" class="form-control" id="searchtext" name="searchtext"
+                                placeholder="พิมพ์ที่นี่">
+                            </div>
+                            <input class="btn btn-primary mb-2 rounded-pill" type="submit" value="ค้นหา">
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div id="search-results" class="table-responsive">
+                  </div>
+                </div>
+              </div>
+              <br>
+              <center>
+                <div class="alert alert-primary hide" role="alert" id="alert" style="display: none">
+                  <div class="loadingio-spinner-double-ring-v7lz2rrp5hk">
+                    <div class="ldio-jlr7wkz6w2">
+                      <div>
+                      </div>
+                      <div>
+                      </div>
+                      <div>
+                        <div>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  กำลังค้นหาข้อมูล....
+                </div>
+              </center>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- randomSelectArray -->
+  <script>
+    function randomSelectArray(arr, count) {
+      if (count > arr.length) {
+        count = arr.length
+      }
+      let newArr = []
+      let data = arr.slice()
+      for (let i = 0; i < count; i++) {
+        let newItem = data.splice(Math.floor(Math.random() * data.length), 1)
+        newArr = newArr.concat(newItem)
+      }
+      return newArr
+    }
+  </script>
+  <!-- randomSelectArray -->
+
+  <!-- formatTime -->
+  <script>
+    function formatTime(seconds) {
+      let h = Math.floor(seconds / 3600)
+      if (h < 10) {
+        h = "0" + h
+      }
+      let m = Math.floor((seconds % 3600) / 60)
+      if (m < 10) {
+        m = "0" + m
+      }
+      let s = (seconds % 3600) % 60
+      if (s < 10) {
+        s = "0" + s
+      }
+      return [h, m, s].join(":")
+    }
+  </script>
+  <!-- formatTime -->
+
+  <!-- data -->
+  <script>
+    let data = {
+      message: null,
+      submitting: false,
+      start: false,
+      title: "แบบทดสอบความรู้หลักสูตรการอบรมผู้สัมผัสอาหาร ตามกฏกระทรวงสุขลักษณะของสถานที่จำหน่ายอาหาร พ.ศ. ๒๕๖๑",
+      countDown: null,
+      counter: 0,
+      ID: "",
+      fn: "",
+      ln: "",
+      config: {},
+      questions: null,
+      id: [],
+      selectedQuestions: null,
+      showWelcome: false,
+      showSidebar: false,
+    }
+  </script>
+  <!-- data -->
+
+  <!-- computed/timer-formatTime -->
+  <script>
+    let computed = {
+      timer: function () {
+        return formatTime(this.counter)
+      }
+    }
+  </script>
+  <!-- computed-timer-formatTime -->
+
+  <!-- methods/startQuiz/endQuiz -->
+  <script>
+    let methods = {
+      startQuiz: function () {
+        this.showWelcome = false
+        if (this.ID === "") {
+          Swal.fire({
+            icon: "warning",
+            title: "คำเตือน",
+            text: "กรุณาพิมพ์ หมายเลขโทรศัพท์ 10 หลัก/รหัสบัตรประจำตัวประชาชน 13 หลัก ของท่านก่อนทำแบบทดสอบด้วยครับ/ค่ะ",
+          })
+        }
+        else if (this.fn === "") {
+          Swal.fire({
+            icon: "warning",
+            title: "คำเตือน",
+            text: "กรุณาพิมพ์ ชื่อ ของท่านก่อนทำแบบทดสอบด้วยครับ/ค่ะ",
+          })
+        }
+        else if (this.ln === "") {
+          Swal.fire({
+            icon: "warning",
+            title: "คำเตือน",
+            text: "กรุณาพิมพ์ สกุล ของท่านก่อนทำแบบทดสอบด้วยครับ/ค่ะ",
+          })
+        }
+        else {
+          this.start = true
+          this.counter = this.config.time * 60
+          let selectedQuestions = randomSelectArray(this.questions, this.config.count)
+          selectedQuestions.forEach(function (item) {
+            item.disabled = false
+            item.selected = []
+            item.correct = true
+          })
+          this.selectedQuestions = selectedQuestions
+          this.countDown = setInterval(function () {
+            this.counter -= 1
+            if (this.counter === 0) {
+              clearInterval(this.countDown)
+              this.endQuiz()
+            }
+          }.bind(this), 1000)
+        }
+      },
+      endQuiz: function () {
+        this.start = false
+        this.submitting = true
+        clearInterval(this.countDown)
+        let totalScore = 0
+        let tempArray
+        this.selectedQuestions.forEach((q) => {
+          if (typeof (q.selected) !== "object") {
+            tempArray = [q.selected]
+          }
+          else {
+            tempArray = [...q.selected]
+          }
+          if (tempArray.join() == q.corrects.join()) {
+            console.log(true)
+            q.correct = true
+            totalScore += q.point
+          }
+          else {
+            console.log(false)
+            q.correct = false
+          }
+          q.disabled = true
+        })
+
+        // const result = [totalScore, this.ID, this.fn, this.ln]
+        document.getElementById("Score").value = totalScore
+        document.getElementById("ID").value = this.ID
+        document.getElementById("FN").value = this.fn
+        document.getElementById("LN").value = this.ln
+        document.getElementById("submitSaveDataForm").click()
+
+        this.submitting = false
+        this.id = [...this.id, this.ID]
+        this.ID = ""
+        this.fn = ""
+        this.ln = ""
+      },
+      closeMessageBox: function () {
+        this.message = null
+      }
+    }
+  </script>
+  <!-- methods/startQuiz/endQuiz -->
+
+  <!-- window.onload -->
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzOT8jgm7ncHsXG2g_Sh8zDWKDQq96XxpaLe38D53V6SJS8-wZ5ihSWKjOrymSNJvH2/exec'
+    window.addEventListener('load', async function (e) {
+      e.preventDefault()
+      let response = await fetch(scriptURL)
+      let res = await response.json()
+      console.log(res)
+      data.id = res.id
+      data.questions = res.questions
+      data.config = {count: 20, time: 20}
+      new Vue({
+        el: "#app",
+        data,
+        computed,
+        methods
+      })
+    }, true)
+  </script>
+  <!-- window.onload -->
+
+  <!-- e.parameter.searchtext -->
+  <script>
+    const searchForm = document.forms['search-form']
+    searchForm.addEventListener('submit', async function (e) {
+      e.preventDefault()
+
+      let div = document.getElementById('search-results')
+      let alertInfo = document.getElementById("alert")
+      alertInfo.style.display = "inline"
+
+      let searched = document.getElementById("searchtext").value
+      if (searched == "") {
+        Swal.fire({
+          icon: 'error',
+          title: 'คำเตือน !!!',
+          timer: 60000,
+          timerProgressBar: true,
+          html: '<b>กรุณาใส่ หมายเลขโทรศัพท์ 10 หลัก/รหัสบัตรประจำตัวประชาชน 13 หลัก</b><br><br>',
+          confirmButtonText: '<i class="fa fa-frown-o"></i>&nbsp; ปิดหน้าต่าง',
+        })
+        div.innerHTML = ""
+        alertInfo.style.display = "none"
+      }
+
+      else {
+        div.innerHTML = ""
+        alertInfo.style.display = "inline"
+
+        let send = await fetch(scriptURL, {method: 'POST', body: new FormData(searchForm)})
+        let data = await send.json()
+        console.log(data.searchData)
+
+        createTable(data.searchData)
+      }
+    })
+
+    function createTable(dataArray) {
+      $('#closeModal').click()
+      var result = " "
+      var div = document.getElementById('search-results')
+      div.innerHTML = result
+      var alertInfo = document.getElementById("alert")
+      alertInfo.style.display = "none"
+      if (dataArray && dataArray !== undefined && dataArray.length != 0 && dataArray != "") {
+        var textInfo = document.getElementById("searchtext")
+        var dataInfo = textInfo.value
+        var result = "<table class='table table-sm table-striped table-hover' id='dtable'>" +
+          "<thead style='white-space: nowrap'>" +
+          "<tr>" +
+          "<th scope='col'>ID</th>" +
+          "<th scope='col'>ชื่อ</th>" +
+          "<th scope='col'>สกุล</th>" +
+          "<th scope='col'>ใบวุฒิบัตรรับรอง</th>" +
+          "<th scope='col'>วันที่อบรม</th>" +
+          "<th scope='col'>วันที่หมดอายุ</th>" +
+          "</tr>" +
+          "</thead>"
+        for (var i = 0; i < dataArray.length; i++) {
+          result += "<tr>"
+          for (var j = 0; j < dataArray[i].length - 1; j++) {
+            result += "<td class=\"table table-striped table-hover\">" + dataArray[i][j] + "</td>"
+          }
+          result += "</tr>"
+        }
+        result += "</table>"
+        Swal.fire({
+          icon: 'success',
+          title: 'ผลการค้นหาใบวุฒิบัตร',
+          timer: 60000,
+          timerProgressBar: true,
+          html: 'พบใบวุฒิบัตร <b>หลักสูตรผู้สัมผัสอาหาร</b><br> : <b> ' + dataInfo + '</b><br><br>' + result + '',
+          confirmButtonText: '<i class="fa fa-thumbs-o-up"></i>&nbsp; ปิดหน้าต่าง',
+        })
+        $(document).ready(function () {
+          $.fn.dataTable.ext.errMode = 'none';
+          pdfMake.fonts = {
+            Roboto: {
+              normal: 'Roboto-Regular.ttf',
+              bold: 'Roboto-Medium.ttf',
+              italics: 'Roboto-Italic.ttf',
+              bolditalics: 'Roboto-MediumItalic.ttf'
+            }
+          }
+          $('#dtable').DataTable({
+            data: dataArray,
+            dom: 'Bfrtip',
+            responsive: true,
+            searching: false,
+            language: {
+              url: "https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/Thai.json",
+            },
+            columns: [
+              {"title": "ID"},
+              {"title": "ชื่อ"},
+              {"title": "สกุล"},
+              {
+                "title": "ใบวุฒิบัตรรับรอง", "render": function (data, type, row, meta) {
+                  if (type === 'display') {
+                    data = '<a href="' + data + '" target="_blank"><center><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp; PDF</center></a>'
+                  }
+                  return data
+                }
+              },
+              {"title": "วันที่อบรม"},
+              {"title": "วันที่หมดอายุ"},
+              {"title": "all"},
+            ],
+            columnDefs: [
+              {
+                targets: [0, 4, 5, 6],
+                visible: false,
+              },
+            ],
+          })
+        })
+        textInfo.value = ""
+      }
+      else {
+        var result = " "
+        var div = document.getElementById('search-results')
+        div.innerHTML = result
+        var alertInfo = document.getElementById("alert")
+        alertInfo.style.display = "none"
+        var textInfo = document.getElementById("searchtext")
+        var dataInfo = textInfo.value
+        Swal.fire({
+          icon: 'error',
+          title: 'ผลการค้นหาใบวุฒิบัตร',
+          timer: 60000,
+          timerProgressBar: true,
+          html: 'ไม่พบใบวุฒิบัตร : <b> ' + dataInfo + '</b>',
+          confirmButtonText: '<i class="fa fa-frown-o"></i>&nbsp; ปิดหน้าต่าง',
+        })
+        textInfo.value = ""
+      }
+    }
+  </script>
+  <!-- e.parameter.searchtext -->
+
+  <!-- e.parameter.Score/ID/FN/LN -->
+  <section>
+    <form id="saveDataForm" class="form-inline" hidden>
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="text" class="form-control" id="Score" name="Score" value="">
+        <input type="text" class="form-control" id="ID" name="ID" value="">
+        <input type="text" class="form-control" id="FN" name="FN" value="">
+        <input type="text" class="form-control" id="LN" name="LN" value="">
+      </div>
+      <input class="btn btn-primary mb-2 rounded-pill" type="submit" id="submitSaveDataForm" value="">
+    </form>
+  </section>
+  <script>
+    const saveDataForm = document.forms['saveDataForm']
+    saveDataForm.addEventListener('submit', async function (e) {
+      e.preventDefault()
+      Swal.fire({
+        icon: 'info',
+        title: 'กำลังประมวลผล กรุณารอสักครู่ !!!',
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading()
+        }
+      })
+      const Score = document.getElementById("Score").value
+      let send = await fetch(scriptURL, {method: 'POST', body: new FormData(saveDataForm)})
+      let data = await send.json()
+      console.log(data)
+      console.log(data.sendData)
+      const sendData = data.sendData
+      if (sendData == 'pass') {
+        Swal.fire({
+          icon: 'success',
+          title: 'ผลการทดสอบ',
+          html: `ทำคะแนนได้ ${Score}/20 คะแนน<br/>(ทำคะแนนได้มากกว่า 16 คะแนน จึงถือว่า <b>"ผ่าน"</b>)</span>`,
+          confirmButtonText: 'OK',
+        })
+      }
+      else if (sendData == 'fail') {
+        Swal.fire({
+          icon: 'error',
+          title: 'ผลการทดสอบ',
+          html: `ทำคะแนนได้ ${Score}/20 คะแนน<br/>(ทำคะแนนได้น้อยกว่า 16 คะแนน จึงถือว่า <b>"ไม่ผ่าน"</b>)</span>`,
+          confirmButtonText: 'OK',
+        })
+      }
+    })
+  </script>
+  <!-- e.parameter.Score/ID/FN/LN -->
+
+  <script src="https://cdn.jsdelivr.net/gh/50c02838bd45e31/cssjs/Vue.js">
+  </script>
+
+</body>
+
+</html>
