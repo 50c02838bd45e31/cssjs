@@ -1,0 +1,230 @@
+/* Vue.js CSS */
+	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped');
+	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai');
+	@import url('https://fonts.googleapis.com/css2?family=Prompt');
+	@import url('https://fonts.googleapis.com/css2?family=Sarabun');
+	* {
+		/* font-family: 'IBM Plex Sans Thai Looped', sans-serif; */
+		/* font-family: 'Noto Sans Thai', sans-serif; */
+		/* font-family: 'Prompt', sans-serif; */
+		/* font-family: 'Sarabun', sans-serif; */
+		font-family: 'Sarabun';
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		/* font-family: 'Noto Sans Thai', sans-serif; */
+		font-family: 'Sarabun';
+		font-weight: 400;
+		margin: 10px 0;
+	}
+
+	.w3-theme {
+		color: #fff !important;
+		background-color: #357EC7 !important;
+	}
+
+	.w3-theme-l3 {
+		color: #000 !important;
+		background-color: #DBE9FA !important;
+	}
+
+	.w3-theme-l4 {
+		color: #000 !important;
+		background-color: #dbefdc !important;
+	}
+
+	.w3-theme-d4 {
+		color: #fff !important;
+		background-color: #f29c2b;
+	}
+
+	.w3-check, .w3-radio {
+		width: 24px;
+		height: 24px;
+		position: relative;
+		top: 6px;
+		margin-right: 7px;
+	}
+
+	#app .message {
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		top: 0px;
+		left: 0px;
+		padding: 0px;
+		margin: 0px;
+		z-index: 99;
+		background: rgba(255, 255, 255, 0.6);
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		  -ms-flex-direction: column;
+			flex-direction: column;
+		-webkit-box-pack: center;
+		  -ms-flex-pack: center;
+			justify-content: center;
+		-webkit-box-align: center;
+		  -ms-flex-align: center;
+			align-items: center;
+	}
+
+	.welcome-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: 1rem;
+		box-sizing: border-box;
+	}
+
+	.custom-form-control {
+		display: block;
+		margin: 10px;
+		width: 50%; /* Adjust the width here */
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #212529;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid #ced4da;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		border-radius: 0.375rem;
+		transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+	}
+
+	.question-container {
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.question-text {
+		flex: 1;
+	}
+
+	.question-image-container {
+		flex: 0 0 50%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 10px;
+	}
+
+	.question-image {
+		max-width: 50%;
+	}
+
+	#app .message > div {
+		max-width: 500px;
+		min-width: 300px;
+		background: #fff;
+	}
+
+	#app header,
+	#app footer {
+	}
+
+	#app header{
+		position: fixed;
+		width: 100%;
+		top: 0px;
+		left: 0px;
+		z-index: 88;
+	}
+
+	#app main {
+		display: -ms-grid;
+		display: grid;
+		-ms-grid-columns: 1fr;
+		  grid-template-columns: 1fr;
+		grid-gap: 16px;
+		padding: 16px 0px;
+		margin-top: 70px;
+	}
+
+	#app main table {
+		width: 100%;
+	}
+
+	#app main td {
+		text-align: center;
+	}
+
+	#app main td div {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-pack: center;
+		  -ms-flex-pack: center;
+			justify-content: center;
+	}
+
+	[v-cloak],
+	.loading {
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.7);
+		position: fixed;
+		display: block;
+	}
+
+	[v-cloak] * {
+		display: none;
+	}
+
+	[v-cloak]::before,
+	.loading::before {
+		content: '';
+		width: 4em;
+		height: 4em;
+		border: 5px solid #eee;
+		border-top-color: #357EC7
+		position: absolute;
+		border-radius: 50%;
+		left: 50%;
+		top: 50%;
+		margin-top: -2em;
+		margin-left: -2em;
+		-webkit-animation: spin 1s linear infinite;
+			animation: spin 1s linear infinite;
+	}
+
+	@-webkit-keyframes spin {
+		0% {
+		  -webkit-transform: rotate(0deg);
+			  transform: rotate(0deg);
+		}
+		100% {
+		  -webkit-transform: rotate(360deg);
+			  transform: rotate(360deg);
+		}
+	}
+
+	@keyframes spin {
+		0% {
+		  -webkit-transform: rotate(0deg);
+			  transform: rotate(0deg);
+		}
+		100% {
+		  -webkit-transform: rotate(360deg);
+			  transform: rotate(360deg);
+		}
+	}
+
+	@media screen and (max-width: 750px) {
+	  #app header {
+	  position: relative;
+	  }
+	  
+	  #app main {
+	  margin: 0px;
+	  }
+	}
+/* Vue.js CSS */
